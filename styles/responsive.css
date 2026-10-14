@@ -1,0 +1,330 @@
+/* Viewport and accessibility overrides; keep this last. */
+
+@media(max-width:760px) {
+  .menu-tabs {
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 5px;
+    flex: none;
+    padding: 0 0 5px;
+  }
+  .menu-tab {
+    min-height: 34px;
+    border: 1px solid #a5c7c23b;
+    color: #cde5dd;
+    background: #12303b;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .12em;
+  }
+  .menu-tab.active {
+    color: #17301e;
+    border-color: var(--lime);
+    background: var(--lime);
+  }
+  .menu-screen.fighter-tab .mission-options,.menu-screen.mission-tab .menu-hero,.menu-screen.mission-tab .fighter-options {
+    display: none;
+  }
+  .menu-screen.mission-tab .hangar-panel {
+    width: 100%;
+  }
+  .menu-notice {
+    top: 105px;
+  }
+  .mode-list {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+  .rush-difficulty .mode-list {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+  .menu-screen {
+    padding: 0 17px;
+  }
+  .menu-topline {
+    height: 68px;
+    padding-right: 116px;
+  }
+  .brand {
+    font-size: 17px;
+  }
+  .brand-mark {
+    width: 31px;
+    height: 31px;
+    font-size: 20px;
+  }
+  .brand small {
+    font-size: 7px;
+  }
+  .run-indicator {
+    font-size: 8px;
+  }
+  .menu-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    overflow: hidden;
+    padding: 7px 0;
+    min-height: 0;
+  }
+  .menu-hero h1 {
+    font-size: clamp(38px,9vw,60px);
+    margin: 11px 0 5px;
+  }
+  .menu-hero > p {
+    font-size: 12px;
+  }
+  .plane-preview {
+    height: clamp(100px,18vh,150px);
+    margin: 8px 0;
+  }
+  .plane-preview::before {
+    width: 125px;
+    height: 125px;
+  }
+  .plane-preview::after {
+    width: 78px;
+    height: 78px;
+  }
+  .selected-readout p {
+    font-size: 11px;
+  }
+  .hangar-panel {
+    padding: 17px;
+  }
+  .hangar-panel h2 {
+    font-size: 19px;
+    margin: 5px 0 12px;
+  }
+  .ship-list {
+    gap: 6px;
+  }
+  .ship-card {
+    min-height: 50px;
+    padding: 5px 8px;
+  }
+  .ship-symbol {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+  .primary-button {
+    margin-top: 12px;
+    min-height: 49px;
+  }
+  .menu-footer {
+    display: none;
+  }
+  .menu-controls,.upgrade-teaser {
+    display: none;
+  }
+  .utility-actions {
+    right: 17px;
+    top: 17px;
+  }
+  .utility-button {
+    min-width: 94px;
+    padding: 8px;
+    font-size: 9px;
+  }
+  .hud-right {
+    top: 65px;
+    right: 17px;
+    width: 113px;
+  }
+  .hud {
+    padding: 19px 17px;
+  }
+  .boss-hud {
+    top: 22px;
+    width: min(43%,230px);
+  }
+  .boss-label {
+    font-size: 8px;
+  }
+  .hud-bottom {
+    left: 17px;
+    right: 17px;
+    bottom: 16px;
+    font-size: 9px;
+  }
+  .stage-buttons {
+    right: 17px;
+    bottom: 54px;
+  }
+}
+@media(max-width:480px) {
+  .upgrade-choices {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .upgrade-choices.evolution {
+    grid-template-columns: 1fr;
+  }
+  .upgrade-choice {
+    min-height: 0;
+    padding: 13px;
+    gap: 5px;
+  }
+  .upgrade-content {
+    padding: 25px 0;
+  }
+  .menu-topline {
+    display: block;
+    padding-top: 14px;
+    height: 87px;
+  }
+  .run-indicator {
+    margin-top: 8px;
+  }
+  .menu-layout {
+    padding-top: 14px;
+  }
+  .menu-hero h1 {
+    font-size: 42px;
+  }
+  .menu-controls {
+    font-size: 8px;
+  }
+  .menu-footer {
+    font-size: 8px;
+  }
+  .hud-value {
+    font-size: 23px;
+  }
+  .boss-hud {
+    top: 190px;
+    left: auto;
+    right: 17px;
+    width: 140px;
+    transform: none;
+  }
+  .boss-label {
+    font-size: 8px;
+  }
+  .hud-bottom {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stage-buttons {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(48px,1fr));
+    right: 11px;
+    bottom: 71px;
+    gap: 5px;
+  }
+  .stage-button {
+    min-width: 0;
+    height: 39px;
+    padding: 0 5px;
+  }
+}
+@media(max-height:850px) {
+  .menu-hero h1 {
+    margin: 7px 0 3px;
+    font-size: clamp(36px,4.2vw,64px);
+  }
+  .plane-preview {
+    height: clamp(100px,24vh,215px);
+    margin: 8px 0;
+  }
+  .hangar-panel {
+    padding: 12px 15px;
+  }
+  .hangar-panel h2 {
+    margin: 3px 0 7px;
+    font-size: 19px;
+  }
+  .mode-heading {
+    margin: 9px 0 5px;
+  }
+  .mode-card {
+    min-height: 36px;
+  }
+  .mode-description {
+    min-height: 0;
+    margin-top: 5px;
+  }
+  .story-select {
+    padding: 7px;
+  }
+  .story-progress {
+    margin-top: 4px;
+  }
+  .primary-button {
+    min-height: 45px;
+    margin-top: 10px;
+    padding: 10px 14px;
+  }
+  .menu-controls,.upgrade-teaser {
+    display: none;
+  }
+}
+@media(max-width:760px) and (max-height:850px) {
+  .plane-preview {
+    height: clamp(95px,16vh,125px);
+  }
+  .menu-hero > p,.selected-readout .ship-mastery {
+    display: none;
+  }
+  .menu-hero h1 {
+    font-size: 36px;
+  }
+}
+@media(max-width:760px) and (max-height:600px) {
+  .menu-topline {
+    height: 55px;
+  }
+  .menu-hero h1 {
+    display: none;
+  }
+  .plane-preview {
+    height: 95px;
+  }
+  .story-select #storyBrief,.story-select #storyDifficultyDescription {
+    display: none;
+  }
+  .menu-notice {
+    top: 90px;
+  }
+}
+@media(max-width:760px) and (max-height:450px) {
+  .menu-topline {
+    height: 43px;
+    padding-top: 5px;
+  }
+  .run-indicator,.menu-hero h1,.menu-hero > p,.selected-readout #shipDescription,.selected-readout .selected-specs,.selected-readout .ship-best,.mode-description,.story-progress {
+    display: none;
+  }
+  .plane-preview {
+    height: 72px;
+    margin: 4px 0;
+  }
+  .hangar-panel {
+    padding: 7px 11px;
+  }
+  .mode-card {
+    min-height: 31px;
+  }
+  .story-select {
+    margin-top: 4px;
+    padding: 4px;
+  }
+  .story-select .mode-heading {
+    margin: 5px 0 3px;
+  }
+  .story-chapter-nav button,.story-stage-list button,.story-difficulty-card {
+    min-height: 25px;
+  }
+  .primary-button {
+    min-height: 38px;
+    margin-top: 6px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*:before,*:after {
+    transition-duration: .01ms!important;
+    animation-duration: .01ms!important;
+  }
+}

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07141f" />
+  <meta name="description" content="Skyfront: Epoch Strike — a multi-mode arcade air combat game." />
+  <title>Skyfront: Epoch Strike</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/menu.css" />
+  <link rel="stylesheet" href="styles/hud.css" />
+  <link rel="stylesheet" href="styles/overlays.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="dist/game.js" defer></script>
+</head>
+<body>
+  <main class="game-frame" id="gameFrame" aria-label="Skyfront: Epoch Strike game">
+    <canvas id="gameCanvas" aria-label="Scrolling airplane shooter battlefield. Use WASD, arrow keys, or drag to fly."></canvas>
+    <div class="screen-grain" aria-hidden="true"></div>
+
+    <div id="gameHud" class="hud hidden" aria-live="off">
+      <div class="hud-top">
+        <div class="hud-cluster">
+          <span class="hud-label">SCORE</span>
+          <strong id="scoreValue" class="hud-value">000000</strong>
+          <span id="comboValue" class="combo-value hidden">COMBO ×1</span>
+          <span id="masteryValue" class="mastery-value">ACE MOVES 0</span>
+          <span id="hudZoneName" class="hud-zone">PACIFIC FRONT</span>
+          <span id="modeHud" class="hud-mode">ENDLESS</span>
+          <span id="waveValue" class="wave-pill">WAVE 01</span>
+          <span id="waveTimer" class="wave-timer">NEXT WAVE 19s</span>
+          <span id="objectiveHud" class="objective-hud hidden"></span>
+          <span id="momentumText" class="momentum-label">MOMENTUM 0%</span>
+          <span class="momentum-track"><span id="momentumBar"></span></span>
+        </div>
+        <div class="hud-right">
+          <div class="meter-label"><span>HULL</span><span id="hullText">6 / 6</span></div>
+          <div class="meter"><div id="hullBar" class="meter-fill hull-fill"></div></div>
+          <div class="meter-label"><span>SHIELD</span><span id="shieldText">0 / 3</span></div>
+          <div class="meter"><div id="shieldBar" class="meter-fill shield-fill"></div></div>
+          <div id="convoyMeter" class="hidden"><div class="meter-label"><span>CONVOY</span><span id="convoyText">8 / 8</span></div><div class="meter"><div id="convoyBar" class="meter-fill convoy-fill"></div></div></div>
+        </div>
+      </div>
+      <div id="bossHud" class="boss-hud hidden"><div class="boss-label"><span>⚠ <span id="bossName">PACIFIC ACE</span> <span id="bossPhase"></span></span><strong id="bossHealthText">100%</strong></div><div class="boss-track"><div id="bossHealthBar"></div></div></div>
+      <div class="hud-bottom">
+        <div><span id="weaponLabel">TWIN CANNONS · LV 1</span><span id="upgradeStatus" class="upgrade-status"></span></div>
+        <span id="abilityLabel">AEGIS · READY</span>
+      </div>
+    </div>
+
+    <div class="utility-actions">
+      <button id="soundButton" class="utility-button" type="button" aria-label="Toggle sound" aria-pressed="true">♪ <span>SOUND ON</span></button>
+    </div>
+    <div class="stage-buttons">
+      <button id="dashButton" class="stage-button dash-button hidden" type="button" aria-label="Dash, Shift key">DASH</button>
+      <button id="strikeButton" class="stage-button momentum-button hidden" type="button" aria-label="Spend full momentum on strike, Q key">STRIKE</button>
+      <button id="guardButton" class="stage-button momentum-button hidden" type="button" aria-label="Spend full momentum on guard, C key">GUARD</button>
+      <button id="abilityButton" class="stage-button ability-button hidden" type="button" aria-label="Use aircraft ability" title="Use ability (Space)">AEGIS</button>
+      <button id="pauseButton" class="stage-button hidden" type="button" aria-label="Pause game">Ⅱ</button>
+    </div>
+    <div id="gameToast" class="game-toast" aria-live="polite"></div>
+    <div id="screenFlash" class="screen-flash" aria-hidden="true"></div>
+
+    <section id="upgradeScreen" class="screen-overlay upgrade-screen hidden" aria-label="Choose a field upgrade">
+      <div class="upgrade-content">
+        <div id="choiceEyebrow" class="overlay-eyebrow">FIELD SYSTEMS READY</div>
+        <h2 id="choiceTitle">Choose an upgrade</h2>
+        <p id="choiceDescription">Pick one permanent boost for this flight. Press 1, 2, or 3.</p>
+        <div id="upgradeChoices" class="upgrade-choices"></div>
+      </div>
+    </section>
+
+    <section id="menuScreen" class="screen-overlay menu-screen" aria-label="Choose an aircraft">
+      <div class="menu-topline">
+        <div class="brand"><span class="brand-mark" aria-hidden="true"><span>✦</span></span><span>SKYFRONT<span class="brand-dot">.</span><small>EPOCH STRIKE</small></span></div>
+        <div class="run-indicator"><span id="bestLabel">ENDLESS BEST</span> <strong id="bestScore">000000</strong></div>
+      </div>
+      <div class="menu-tabs" role="group" aria-label="Hangar sections"><button class="menu-tab active" type="button" data-menu-tab="fighter" aria-pressed="true">FIGHTER</button><button class="menu-tab" type="button" data-menu-tab="mission" aria-pressed="false">MISSION</button></div>
+      <div id="menuNotice" class="menu-notice hidden" role="status"></div>
+      <div class="menu-layout">
+        <div class="menu-hero">
+          <div class="eyebrow"><span class="tiny-diamond"></span> THREE ERAS · ONE SKY</div>
+          <h1>OWN THE <em>SKY.</em></h1>
+          <p>Pick your aircraft. Dash through fire, build momentum, and outfly the commanders.</p>
+          <div class="plane-preview" id="planePreview" aria-label="Preview of selected aircraft as it appears in gameplay">
+            <span>FLIGHT PREVIEW</span><span>IN-GAME AIRCRAFT</span><span class="preview-lock">LOCKED</span>
+          </div>
+          <div class="selected-readout">
+            <strong id="selectedShipLabel">FALCON MK. I</strong>
+            <p id="fighterUnlockStatus" class="fighter-unlock-status"></p>
+            <p id="shipDescription">Reinforced prop fighter. Twin cannons and six hull points make it a forgiving choice for new pilots.</p>
+            <p id="shipMastery" class="ship-mastery"></p>
+            <div class="selected-specs"><span>HULL <strong id="shipHull">6</strong></span><span>SPEED <strong id="shipSpeed">315</strong></span><span>WEAPON <strong id="shipWeapon">TWIN CANNONS</strong></span><span>ABILITY <strong id="shipAbility">AEGIS</strong></span></div>
+            <span id="shipBest" class="ship-best">FALCON MK. I BEST <strong>000000</strong></span>
+          </div>
+        </div>
+        <div class="hangar-panel">
+          <div class="fighter-options">
+          <div class="eyebrow small">SELECT YOUR AIRCRAFT</div>
+          <h2>Choose your fighter</h2>
+          <div class="ship-carousel" role="group" aria-label="Choose aircraft">
+            <button id="previousShip" class="carousel-arrow" type="button" aria-label="Previous aircraft">←</button>
+            <div class="ship-list">
+            <button class="ship-card active" type="button" data-ship="warbird" aria-pressed="true"><span class="ship-symbol warbird-symbol">✚</span><span class="ship-copy"><strong>FALCON MK. I</strong><small>WWII · Twin cannons · 6 hull</small></span><span class="ship-check" aria-hidden="true">✓</span></button>
+            <button class="ship-card" type="button" data-ship="jet" aria-pressed="false"><span class="ship-symbol jet-symbol">⌁</span><span class="ship-copy"><strong>VIPER X</strong><small>Modern · Rapid spread · 4 hull</small></span><span class="ship-check" aria-hidden="true">✓</span></button>
+            <button class="ship-card" type="button" data-ship="nova" aria-pressed="false"><span class="ship-symbol nova-symbol">✦</span><span class="ship-copy"><strong>NOVA SPECTRE</strong><small>Future · Piercing plasma · 5 hull</small></span><span class="ship-check" aria-hidden="true">✓</span></button>
+            <button class="ship-card" type="button" data-ship="kestrel" aria-pressed="false"><span class="ship-symbol kestrel-symbol">➤</span><span class="ship-copy"><strong>KESTREL M-7</strong><small>Missile hunter · Homing rockets · 5 hull</small></span><span class="ship-check" aria-hidden="true">✓</span></button>
+            <button class="ship-card" type="button" data-ship="ray" aria-pressed="false"><span class="ship-symbol ray-symbol">╎</span><span class="ship-copy"><strong>RAY SPECTER</strong><small>Laser craft · Pulse beams · 4 hull</small></span><span class="ship-check" aria-hidden="true">✓</span></button>
+            </div>
+            <button id="nextShip" class="carousel-arrow" type="button" aria-label="Next aircraft">→</button>
+          </div>
+          <p id="shipPosition" class="ship-position">01 / 05 · USE LEFT / RIGHT</p>
+          <details class="paint-details"><summary>AIRCRAFT PAINT</summary><div id="paintList" class="paint-list" role="group" aria-label="Choose aircraft paint"></div><p id="paintGoals" class="paint-goals"></p></details>
+          </div>
+          <div class="mission-options">
+          <div class="mode-heading">CHOOSE MODE</div>
+          <div class="mode-list" role="group" aria-label="Choose game mode">
+            <button class="mode-card" type="button" data-mode="story" aria-pressed="false">STORY</button>
+            <button class="mode-card active" type="button" data-mode="endless" aria-pressed="true">ENDLESS</button>
+            <button class="mode-card" type="button" data-mode="sector" aria-pressed="false">SECTOR RUN</button>
+            <button class="mode-card" type="button" data-mode="rush" aria-pressed="false">BOSS RUSH</button>
+            <button class="mode-card" type="button" data-mode="escort" aria-pressed="false">CONVOY ESCORT</button>
+          </div>
+          <p id="modeDescription" class="mode-description">Survive as long as you can. A new commander appears every third wave.</p>
+          <div id="storySelect" class="story-select hidden">
+            <div class="mode-heading">CAMPAIGN · SELECT UNLOCKED MISSION</div>
+            <div class="story-chapter-nav"><button id="previousChapter" type="button" aria-label="Previous chapter">←</button><strong id="storyChapterTitle"></strong><button id="nextChapter" type="button" aria-label="Next chapter">→</button></div>
+            <p id="storyBrief" class="mode-description"></p>
+            <div id="storyStageList" class="story-stage-list" role="group" aria-label="Story missions"></div>
+            <p id="storyProgress" class="story-progress"></p>
+            <div class="mode-heading">STORY DIFFICULTY</div>
+            <div class="story-difficulties" role="group" aria-label="Story difficulty"><button class="story-difficulty-card" type="button" data-story-difficulty="easy">EASY</button><button class="story-difficulty-card active" type="button" data-story-difficulty="medium">NORMAL</button><button class="story-difficulty-card" type="button" data-story-difficulty="extreme">HARD</button></div>
+            <p id="storyDifficultyDescription" class="mode-description"></p>
+          </div>
+          <div id="rushDifficulty" class="rush-difficulty hidden">
+            <div class="mode-heading">BOSS RUSH THREAT</div>
+            <div class="mode-list" role="group" aria-label="Boss Rush difficulty">
+              <button class="difficulty-card" type="button" data-difficulty="easy" aria-pressed="false">EASY</button>
+              <button class="difficulty-card active" type="button" data-difficulty="medium" aria-pressed="true">MEDIUM</button>
+              <button class="difficulty-card" type="button" data-difficulty="extreme" aria-pressed="false">EXTREME</button>
+            </div>
+            <p id="difficultyDescription" class="mode-description"></p>
+          </div>
+          <button id="startButton" class="primary-button" type="button"><span id="startLabel">LAUNCH MISSION</span><span aria-hidden="true">↗</span></button>
+          <div class="menu-controls">MOVE <b>WASD / ARROWS / DRAG</b><span>·</span> DASH <b>SHIFT</b><span>·</span> STRIKE <b>Q</b><span>·</span> GUARD <b>C</b><span>·</span> ABILITY <b>SPACE</b></div>
+          <p class="upgrade-teaser">Master your aircraft, dive for tactical caches, and outfly eight Boss Rush commanders.</p>
+          </div>
+        </div>
+      </div>
+      <div class="menu-footer"><span id="zoneName">PACIFIC FRONT</span><span>ENDLESS ARCADE AIR COMBAT</span></div>
+    </section>
+
+    <section id="pauseScreen" class="screen-overlay pause-screen hidden" aria-label="Game paused">
+      <div class="overlay-content compact">
+        <div class="overlay-eyebrow">MISSION INTERRUPTED</div>
+        <div class="overlay-headline">PAUSED<span class="period">.</span></div>
+        <p>Your aircraft is holding position.</p>
+        <button id="resumeButton" class="primary-button" type="button"><span>RESUME FLIGHT</span><span>↗</span></button>
+        <button id="pauseHangarButton" class="text-button" type="button">RETURN TO HANGAR</button>
+      </div>
+    </section>
+
+    <section id="gameOverScreen" class="screen-overlay over-screen hidden" aria-label="Game over">
+      <div class="overlay-content compact">
+        <div id="endEyebrow" class="overlay-eyebrow">TRANSMISSION LOST</div>
+        <div id="endTitle" class="overlay-headline">GAME <em>OVER.</em></div>
+        <div class="end-stats"><div><span>FINAL SCORE</span><strong id="endScore">000000</strong></div><div><span>MISSION / WAVE</span><strong id="endWave">01</strong></div><div><span>HOSTILES DOWN</span><strong id="endKills">0</strong></div></div>
+        <div id="recordText" class="record-text"></div>
+        <button id="retryButton" class="primary-button" type="button"><span>FLY AGAIN</span><span>↗</span></button>
+        <button id="hangarButton" class="text-button" type="button">CHOOSE AIRCRAFT</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

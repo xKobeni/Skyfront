@@ -1,0 +1,633 @@
+/* Hangar, fighter selection, modes, and story controls. */
+
+/* Menu shell and title */
+.menu-screen {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 clamp(18px,4vw,60px);
+  background: linear-gradient(90deg,#061522bd,#06152288 55%,#061522bb);
+}
+.menu-tabs {
+  display: none;
+}
+.menu-notice {
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  top: 66px;
+  transform: translateX(-50%);
+  width: min(92vw,560px);
+  padding: 9px 15px;
+  border: 1px solid var(--lime);
+  color: #eaffc6;
+  background: #103340f2;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .07em;
+}
+.menu-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 80px;
+  padding-right: 130px;
+  border-bottom: 1px solid #c6eac52a;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: .06em;
+  line-height: 1;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  transform: rotate(45deg);
+  border: 1px solid var(--lime);
+  color: var(--lime);
+  font-size: 25px;
+  line-height: 1;
+}
+.brand-mark > span {
+  transform: rotate(-45deg);
+}
+.brand-dot {
+  color: var(--lime);
+}
+.brand small {
+  display: block;
+  color: #a5c8c4;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .25em;
+  margin-top: 7px;
+}
+.run-indicator {
+  color: #9db5bc;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  white-space: nowrap;
+}
+.run-indicator strong {
+  color: var(--lime);
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.menu-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(295px,350px);
+  align-items: center;
+  gap: clamp(26px,5vw,80px);
+  width: 100%;
+  max-width: 1250px;
+  flex: 1;
+  min-height: 0;
+  margin: auto;
+  padding: 8px 0 12px;
+}
+.menu-hero {
+  min-width: 0;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--lime);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .2em;
+}
+.eyebrow.small {
+  color: #a6c3c5;
+  font-size: 9px;
+}
+.tiny-diamond {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--lime);
+  transform: rotate(45deg);
+}
+.menu-hero h1 {
+  margin: 16px 0 8px;
+  font-size: clamp(42px,5vw,80px);
+  letter-spacing: -.07em;
+  line-height: 1;
+  font-weight: 950;
+}
+.menu-hero h1 em,.overlay-headline em {
+  color: var(--lime);
+  font-style: normal;
+}
+.menu-hero > p {
+  max-width: 490px;
+  margin: 0;
+  color: #bfd2d1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+/* Aircraft preview and selected fighter details */
+.plane-preview {
+  position: relative;
+  height: clamp(180px,31vh,305px);
+  margin: 22px 0 16px;
+  border: 1px solid #a7e5d15e;
+  background: radial-gradient(circle at center,#85d7c816,transparent 65%);
+  box-shadow: inset 0 0 50px #07172452;
+  pointer-events: none;
+}
+.plane-preview::before,.plane-preview::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 175px;
+  height: 175px;
+  border: 1px solid #a6e7cf26;
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+}
+.plane-preview::after {
+  width: 110px;
+  height: 110px;
+  border-style: dashed;
+}
+.plane-preview span {
+  position: absolute;
+  z-index: 1;
+  left: 14px;
+  top: 13px;
+  color: #c9e3db;
+  font-size: 9px;
+  letter-spacing: .18em;
+  font-weight: 900;
+}
+.plane-preview span:nth-child(2) {
+  top: auto;
+  bottom: 13px;
+  color: #9bbab7;
+}
+.plane-preview .preview-lock {
+  display: none;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%,-50%);
+  padding: 8px 15px;
+  border: 1px solid #ffc88b;
+  color: #ffe0ae;
+  background: #0a1d28e8;
+  font-size: 14px;
+  letter-spacing: .22em;
+}
+.plane-preview.locked {
+  filter: saturate(.3);
+}
+.plane-preview.locked .preview-lock {
+  display: block;
+}
+.selected-readout {
+  max-width: 560px;
+  padding: 0 0 0 15px;
+  border-left: 3px solid var(--lime);
+}
+.selected-readout > strong {
+  font-size: 15px;
+  letter-spacing: .1em;
+}
+.selected-readout p {
+  color: #b6cbca;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 7px 0;
+}
+.selected-readout .fighter-unlock-status {
+  margin: 5px 0 2px;
+  color: var(--lime);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+.selected-readout .fighter-unlock-status.locked {
+  color: #ffd39b;
+}
+.selected-readout .ship-mastery {
+  color: #d9efaf;
+  font-size: 10px;
+  font-weight: 800;
+}
+.selected-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  margin: 8px 0;
+  color: #9fbdbb;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+.selected-specs strong {
+  color: #e9f5ed;
+  margin-left: 4px;
+}
+.ship-best {
+  color: #a7c3ba;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .1em;
+}
+.ship-best strong {
+  color: var(--lime);
+  margin-left: 5px;
+  font-variant-numeric: tabular-nums;
+}
+/* Fighter carousel */
+.hangar-panel {
+  padding: 20px;
+  border: 1px solid #b7e9d04a;
+  background: #081b29e8;
+  box-shadow: 0 18px 50px #0008;
+}
+.hangar-panel h2 {
+  margin: 7px 0 14px;
+  font-size: 22px;
+  letter-spacing: -.04em;
+}
+.ship-carousel {
+  display: grid;
+  grid-template-columns: 39px minmax(0,1fr) 39px;
+  align-items: stretch;
+  gap: 6px;
+}
+.ship-list {
+  min-width: 0;
+}
+.ship-card:not(.active) {
+  display: none;
+}
+.carousel-arrow {
+  border: 1px solid #a5c7c23b;
+  background: #132b35;
+  color: var(--lime);
+  font-size: 21px;
+  font-weight: 900;
+}
+.carousel-arrow:hover {
+  background: #254134;
+}
+.ship-position {
+  margin: 6px 0 0;
+  color: #a8c3c3;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.ship-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  width: 100%;
+  padding: 6px 9px;
+  text-align: left;
+  color: var(--text);
+  background: #12303b;
+  border: 1px solid #ffffff2d;
+  transition: background .15s,border-color .15s,transform .15s;
+}
+.ship-card:hover:not(:disabled) {
+  background: #1a3b45;
+  transform: translateX(2px);
+}
+.ship-card.active {
+  border-color: var(--lime);
+  background: #254134;
+  box-shadow: inset 3px 0 0 var(--lime);
+}
+.ship-card:disabled {
+  opacity: .8;
+  cursor: not-allowed;
+}
+.ship-symbol {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: #28463e;
+  color: #c8f56c;
+  font-size: 21px;
+}
+.jet-symbol {
+  background: #1a4058;
+  color: #99ddff;
+}
+.nova-symbol {
+  background: #443569;
+  color: #e5bfff;
+}
+.kestrel-symbol {
+  background: #5b392b;
+  color: #ffca83;
+}
+.ray-symbol {
+  background: #1d4c4a;
+  color: #9bfff0;
+}
+.ship-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.ship-copy strong {
+  font-size: 12px;
+  letter-spacing: .06em;
+}
+.ship-copy small {
+  color: #b2c5c9;
+  font-size: 10px;
+}
+.ship-check {
+  color: var(--lime);
+  margin-left: auto;
+  opacity: 0;
+}
+.ship-card.active .ship-check {
+  opacity: 1;
+}
+.ship-card.locked .ship-check {
+  opacity: 1;
+  color: #ffd39b;
+}
+.ship-card.locked .ship-copy {
+  opacity: .64;
+}
+/* Mode and story mission selection */
+.mode-heading {
+  margin: 15px 0 7px;
+  color: #abc9c5;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.mode-list {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 5px;
+}
+.rush-difficulty .mode-list {
+  grid-template-columns: repeat(3,minmax(0,1fr));
+}
+.story-select {
+  margin-top: 8px;
+  padding: 9px;
+  border: 1px solid #a5c7c23b;
+  background: #0b2531;
+}
+.story-select .mode-heading:first-child {
+  margin-top: 0;
+}
+.story-chapter-nav {
+  display: grid;
+  grid-template-columns: 31px 1fr 31px;
+  align-items: center;
+  gap: 6px;
+}
+.story-chapter-nav strong {
+  text-align: center;
+  color: #d7f5df;
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+.story-chapter-nav button,.story-stage-list button,.story-difficulty-card {
+  min-height: 30px;
+  border: 1px solid #a5c7c23b;
+  color: #d0e7e5;
+  background: #163440;
+  font-size: 10px;
+  font-weight: 850;
+}
+.story-chapter-nav button:disabled,.story-stage-list button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.story-stage-list {
+  display: grid;
+  grid-template-columns: repeat(6,minmax(0,1fr));
+  gap: 4px;
+  margin-top: 7px;
+}
+.story-stage-list button.active,.story-difficulty-card.active {
+  color: #17281d;
+  background: var(--lime);
+  border-color: var(--lime);
+}
+.story-progress {
+  margin: 7px 0 0;
+  color: #b7d7cf;
+  font-size: 9px;
+}
+.story-difficulties {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 5px;
+}
+.mode-card {
+  min-height: 42px;
+  padding: 5px 3px;
+  border: 1px solid #a5c7c23b;
+  background: #132b35;
+  color: #bfd2d0;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .03em;
+}
+.mode-card:hover:not(:disabled) {
+  background: #22424a;
+}
+.mode-card.active {
+  color: #193126;
+  background: var(--lime);
+  border-color: var(--lime);
+}
+.mode-card:disabled {
+  cursor: not-allowed;
+}
+.difficulty-card {
+  min-height: 38px;
+  padding: 5px 3px;
+  border: 1px solid #a5c7c23b;
+  background: #132b35;
+  color: #bfd2d0;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+.difficulty-card:hover:not(:disabled) {
+  background: #22424a;
+}
+.difficulty-card.active {
+  color: #193126;
+  background: var(--lime);
+  border-color: var(--lime);
+}
+.difficulty-card[data-difficulty="extreme"].active {
+  color: #2c1317;
+  background: #ff9b83;
+  border-color: #ff9b83;
+}
+.difficulty-card:disabled {
+  cursor: not-allowed;
+}
+.mode-description {
+  min-height: 28px;
+  margin: 7px 0 0;
+  color: #a8c3c3;
+  font-size: 10px;
+  line-height: 1.4;
+}
+/* Paint selection */
+.paint-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.paint-card {
+  padding: 7px 9px;
+  border: 1px solid #a5c7c23b;
+  color: #cfe3de;
+  background: #132b35;
+  font-size: 9px;
+  font-weight: 900;
+}
+.paint-card.active {
+  color: #14291e;
+  background: var(--lime);
+  border-color: var(--lime);
+}
+.paint-card:disabled {
+  color: #71878b;
+  cursor: not-allowed;
+}
+.paint-goals {
+  min-height: 25px;
+  margin: 7px 0 0;
+  color: #9eb9b8;
+  font-size: 9px;
+  line-height: 1.4;
+}
+.paint-details {
+  margin-top: 10px;
+}
+.paint-details summary {
+  color: #abc9c5;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  cursor: pointer;
+}
+.paint-details .paint-list {
+  margin-top: 8px;
+}
+/* Launch action and footer */
+.primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  width: 100%;
+  min-height: 55px;
+  margin-top: 18px;
+  padding: 15px 18px;
+  color: #16261c;
+  background: var(--lime);
+  border: 0;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  transition: background .15s,transform .15s;
+}
+.primary-button:hover {
+  background: #dcff98;
+  transform: translateY(-2px);
+}
+.primary-button:disabled {
+  color: #b9c2bb;
+  background: #455b58;
+  cursor: not-allowed;
+  transform: none;
+}
+.primary-button span:last-child {
+  font-size: 19px;
+}
+.menu-controls {
+  margin-top: 17px;
+  color: #90acb5;
+  font-size: 9px;
+  line-height: 1.9;
+  letter-spacing: .08em;
+}
+.menu-controls b {
+  color: #e0eeee;
+  margin-left: 4px;
+}
+.menu-controls span {
+  margin: 0 7px;
+  color: var(--lime);
+}
+.upgrade-teaser {
+  color: #9dbab9;
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+}
+.menu-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  flex: none;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 0 10px;
+  color: #b7d3cd;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+.menu-footer span:first-child {
+  color: var(--lime);
+}
+.utility-actions {
+  position: absolute;
+  z-index: 9;
+  right: 20px;
+  top: 18px;
+}
+.utility-button {
+  min-width: 105px;
+  padding: 10px 12px;
+  border: 1px solid #d1efd662;
+  color: #e3eeee;
+  background: #0b2739dd;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .07em;
+}
+.utility-button:hover,.stage-button:hover {
+  background: #1b4050;
+}

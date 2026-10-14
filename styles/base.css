@@ -1,0 +1,69 @@
+/* Shared colors, resets, canvas frame, and common overlays. */
+
+:root {
+  color-scheme: dark;
+  --bg: #07131c;
+  --text: #e8f1f1;
+  --muted: #90aab3;
+  --lime: #c8f56c;
+  --aqua: #7be6e4;
+}
+* {
+  box-sizing: border-box;
+}
+html,body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+body {
+  color: var(--text);
+  font-family: Inter,'Segoe UI',Arial,sans-serif;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+}
+.hidden {
+  display: none !important;
+}
+.game-frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #071d2c;
+}
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.screen-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .13;
+  background: repeating-linear-gradient(to bottom,transparent 0,transparent 3px,#0005 4px);
+}
+.screen-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 28px;
+  background: #071724e9;
+}
